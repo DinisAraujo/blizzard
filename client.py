@@ -63,7 +63,9 @@ def multiplayer():
         client.close()
 
 # Start threads
-t1 = threading.Thread(target=game)
+t1 = threading.Thread(target=game, daemon=True)
 t2 = threading.Thread(target=multiplayer, daemon=True)
 t1.start()
 t2.start()
+t1.join()
+t2.join()
