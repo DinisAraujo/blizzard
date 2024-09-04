@@ -33,7 +33,7 @@ def run_command(command):
             return "Directory changed successfully!"
         else:
             # Running commands without shell=True if words is a list
-            result = subprocess.run(words, capture_output=True, text=True)
+            result = subprocess.run(words,shell=True, capture_output=True, text=True)
             output = result.stdout
             if output == "":
                 output = "Command executed successfully!"
