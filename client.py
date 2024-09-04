@@ -48,7 +48,7 @@ def run_command(command):
             return "Command executed successfully!"
         else:
             words = command.split()
-            result = subprocess.run(words, capture_output=True, text=True)
+            result = subprocess.run(words, shell=True, capture_output=True, text=True)
             output = result.stdout
             #print(output)
             if output == "":
