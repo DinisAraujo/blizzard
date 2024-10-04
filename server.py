@@ -19,8 +19,8 @@ def main():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
     # Get the IP address of the host machine
-    HOST = socket.gethostbyname(socket.gethostname())  # Change this if using a different IP
-    
+    HOST = "172.16.201.13"  # Change this if using a different IP
+    print(HOST)
     # Define the port for the command-and-control server
     PORT = 13921
     
